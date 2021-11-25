@@ -8,7 +8,7 @@ import java.lang.*;
  */
 public class Spelling {
     /*
-     * Node class for a binary tree
+     * Node class for a binary trie
      */
     static class TrieNode {
         double val;
@@ -21,7 +21,6 @@ public class Spelling {
             this.val = val;
             this.key = key;
             this.numChildren = 0;
-            //this.children = new TrieNode[26];
         }
 
         TrieNode(double val, char key, TrieNode[] children, int numChildren, String storedWord) {
@@ -34,7 +33,7 @@ public class Spelling {
     }
 
     /*
-     * The root of the binary tree
+     * The root of the trie
      */
     TrieNode root;
 
@@ -46,7 +45,7 @@ public class Spelling {
     }
 
     /**
-     * Insert an item to the tree
+     * Insert an item to the trie
      *
      * @param freq value to insert, string to insert
      */
@@ -60,7 +59,7 @@ public class Spelling {
      * @param freq value to add
      * @param word string to add to tree by each char
      * @param node current node
-     * @return root of the binary tree
+     * @return root of the trie
      */
     private TrieNode insert(String word, TrieNode node, double freq) {
         //if root doesn't have children yet
@@ -150,12 +149,6 @@ public class Spelling {
             }
         }
         return strList;
-        //traverse recursively and with a for loop (for each child)
-        //send to recursive function to check all cases: takes and returns array (length count) of trie nodes
-        //convert to list back here
-        //base case: check min (use node.val), if true, switch node in array and return
-        //make sure to check if the node is the end of the path or if there is more. if there are children
-        //alter array and call function again
     }
 
     public TrieNode[] recurCheck(TrieNode[] trieArr, TrieNode node, int wordLength){
@@ -268,14 +261,14 @@ public class Spelling {
             System.out.println("File not found.");
         }
 
-//        sugList = newTrie.suggest("onomatopoeia", 5);
-//        for (int i = 0; i < sugList.size(); i++) {
-//            List<String> temp = new ArrayList<String>(sugList.get(i));
-//            for (int j = 0; j < 5; j++) {
-//                System.out.print(temp.get(j)+" ");
-//            }
-//            System.out.println();
-//        }
+        sugList = newTrie.suggest("onomatopoeia", 5);
+        for (int i = 0; i < sugList.size(); i++) {
+            List<String> temp = new ArrayList<String>(sugList.get(i));
+            for (int j = 0; j < 5; j++) {
+                System.out.print(temp.get(j)+" ");
+            }
+            System.out.println();
+        }
 
         int spelledCorrect=0;
         try (Scanner scan = new Scanner(new File("misspelling.csv"));) {
