@@ -299,6 +299,6 @@ public class Spelling {
         }
 
         //print statement for testing
-        System.out.println("for "+ incorrectCount + "elements, # spelled correctly:"+ spelledCorrect);
+        System.out.println("for "+ incorrectCount + " elements, # spelled correctly:"+ spelledCorrect);
     }
 }
