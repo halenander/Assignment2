@@ -70,6 +70,7 @@ public class Spelling {
                 node.numChildren++;
             }
             for (int j = 0; j < node.numChildren; j++) {
+                //if char matches
                 if (node.children[j].key == word.charAt(i)){
                     //if end of word set frequency value and string
                     if((i+1) == word.length()){
@@ -108,16 +109,17 @@ public class Spelling {
 
     public List<List<String>> suggest(String token, int count) {
         List<String> holder = new ArrayList<String>();
-        //call check function in spellcheck
         List<List<String>> sugList = new ArrayList<List<String>>();
+        //run for each prefix til the length of the string
         for (int i = 0; i < token.length(); i++) {
+            //get arraylist of suggestions and add to list of lists
             holder = check(token.substring(0, i + 1), count, token.length());
+            //if returned arraylist doesnt have count # of elements, replace it with previous arraylist
             if (holder.size() < count) {
                 sugList.add(sugList.get(i-1));
             } else {
                 sugList.add(holder);
             }
-            //if returned array is not full, fill array with most recent full array until token.length is reached
         }
         return sugList;
     }
@@ -125,12 +127,14 @@ public class Spelling {
     public ArrayList<String> check(String preFix, int count, int wordLength){
         ArrayList<String> strList = new ArrayList<>();
         TrieNode[] trieArr = new TrieNode[count];
+        //initialize array of trie nodes
         for (int i = 0; i < count; i++) {
             trieArr[i] = new TrieNode(0, '\0');
         }
         TrieNode node = root;
         //go through trie til you get through the preFix
         for (int i = 0; i < preFix.length(); i++) {
+            //run through all the children for each branch
             for (int j = 0; j < node.numChildren; j++) {
                 if(preFix.charAt(i)== node.children[j].key){
                     //change node
@@ -144,6 +148,7 @@ public class Spelling {
         trieArr = recurCheck(trieArr, node, wordLength);
         //turn arr of nodes to list of string
         for (int i = 0; i < trieArr.length; i++) {
+            //only add to arraylist if storedword isn't null (i.e. if there was a matching node with the prefix)
             if(trieArr[i].storedWord != null){
                 strList.add(trieArr[i].storedWord);
             }
@@ -180,6 +185,7 @@ public class Spelling {
         return trieArr;
     }
 
+    //helper function to replace node with lowest frequency with new node (with higher frequency)
     private int checkMin(TrieNode[] max, double value){
         double min = max[0].val;
         int index = 0;
@@ -213,6 +219,7 @@ public class Spelling {
         }
     }
 
+    //function to read in misspelling.cvc file and keep track of how many suggested words match the correction
     public int misSpelled(String line, int count){
         String correct;
         String incorrect;
@@ -226,15 +233,17 @@ public class Spelling {
                 incorrect= rowScanner.next();
                 sugList= suggest(incorrect,count);
                 isCorrect = false;
+                //run through returned list of lists to see if any of the string match the correct string
                 for (int i = 0; i < sugList.size(); i++) {
                     List<String> temp = new ArrayList<String>(sugList.get(i));
                     for (int j = 0; j < count; j++) {
-                        //if any of the string in the list matches the correct string, increase total
+                        //if any of the string in the list matches the correct string, set isCorrect to true (to show match found)
                         if (temp.get(j).equals(correct)) {
                             isCorrect= true;
                         }
                     }
                 }
+                //increase total if match found
                 if(isCorrect){
                     total++;
                 }
@@ -248,6 +257,7 @@ public class Spelling {
 
 
     public static void main(String[] args) {
+        //PART 2
         Spelling newTrie = new Spelling();
         List<List<String>> sugList = new ArrayList<List<String>>();
         try (Scanner scanner = new Scanner(new File("unigram_freq.csv"));) {
@@ -261,7 +271,10 @@ public class Spelling {
             System.out.println("File not found.");
         }
 
+        //PART 3
+        //used for testing purposes, can replace string and int value
         sugList = newTrie.suggest("onomatopoeia", 5);
+        //loop to print array, also for testing purposes
         for (int i = 0; i < sugList.size(); i++) {
             List<String> temp = new ArrayList<String>(sugList.get(i));
             for (int j = 0; j < 5; j++) {
@@ -270,11 +283,14 @@ public class Spelling {
             System.out.println();
         }
 
+        //PART 4
         int spelledCorrect=0;
+        //can change value of incorrectCount to any # (3-7 for part 4) for testing purposes
+        int incorrectCount = 7;
         try (Scanner scan = new Scanner(new File("misspelling.csv"));) {
             scan.nextLine();
             while (scan.hasNextLine()) {
-                spelledCorrect+=(newTrie.misSpelled(scan.nextLine(), 7));
+                spelledCorrect+=(newTrie.misSpelled(scan.nextLine(), incorrectCount));
             }
             scan.close();
         }
@@ -282,6 +298,7 @@ public class Spelling {
             System.out.println("File not found.");
         }
 
-        System.out.println("for 7 elements, # spelled correctly:"+ spelledCorrect);
+        //print statement for testing
+        System.out.println("for "+ incorrectCount + "elements, # spelled correctly:"+ spelledCorrect);
     }
 }
